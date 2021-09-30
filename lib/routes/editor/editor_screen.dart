@@ -13,6 +13,24 @@ class EditorScreen extends GetView<EditorController> {
   Widget build(BuildContext context) => Scaffold(
         appBar: AppBar(
           title: const Text('editor menus'),
+          automaticallyImplyLeading: false,
+          leading: IconButton(
+            tooltip: 'Back',
+            onPressed: () async {
+              var close = await Get.dialog<bool?>(
+                AlertDialog(
+                  title: const Text('Alert'),
+                  content: const Text('Do you really want close the editor? Your current changes won\'t be saved.'),
+                  actions: [
+                    TextButton(onPressed: () => Get.back(result: true), child: const Text('YES')),
+                    TextButton(onPressed: () => Get.back(result: false), child: const Text('NO')),
+                  ],
+                ),
+              );
+              if (close == true) Get.back();
+            },
+            icon: const Icon(Icons.arrow_back_ios),
+          ),
           actions: [
             IconButton(
               onPressed: () => controller.save().then((value) => Get.back()),
@@ -139,10 +157,38 @@ class _FoodCategoryView extends StatelessWidget {
                             padding: const EdgeInsets.all(16.0),
                             child: Column(
                               children: [
-                                for (var i = 0; i < foodCategory.products.length; i++) ...[
-                                  _ProductView(foodCategory: foodCategory, product: foodCategory.products[i]),
-                                  const Divider(height: 2.0, color: Colors.black),
-                                ],
+                                Table(
+                                  columnWidths: const {
+                                    0: FlexColumnWidth(),
+                                    1: FlexColumnWidth(),
+                                    2: FlexColumnWidth(2),
+                                    3: FlexColumnWidth(),
+                                    4: FlexColumnWidth(2),
+                                  },
+                                  children: [
+                                    const TableRow(
+                                      children: [
+                                        Text('Name'),
+                                        Text('Shortname'),
+                                        Text('Description'),
+                                        Text('Price'),
+                                        Text('Add'),
+                                      ],
+                                    ),
+                                    for (var i = 0; i < foodCategory.products.length; i++)
+                                      TableRow(children: [
+                                        Text('${foodCategory.products[i].name}'),
+                                        Text('${foodCategory.products[i].shortName}'),
+                                        Text('${foodCategory.products[i].description}'),
+                                        Text('${foodCategory.products[i].price}'),
+                                        Text('${foodCategory.products[i].additives}')
+                                      ]),
+                                  ],
+                                ),
+                                // for (var i = 0; i < foodCategory.products.length; i++) ...[
+                                //   _ProductView(foodCategory: foodCategory, product: foodCategory.products[i]),
+                                //   const Divider(height: 2.0, color: Colors.black),
+                                // ],
                                 const SizedBox(height: 8.0),
                                 _AddProductButton(foodCategory: foodCategory),
                                 const SizedBox(height: 8.0),
@@ -195,7 +241,6 @@ class _AddCategoryButton extends StatelessWidget {
   Widget build(BuildContext context) => IconButton(
         tooltip: 'New Category',
         onPressed: () {
-          var id = const Uuid().v4();
           Get.find<EditorController>().foodCategories.add(
                 FoodCategory(
                   id: const Uuid().v4(),

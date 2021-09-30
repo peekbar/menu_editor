@@ -1,4 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'package:uuid/uuid.dart';
 
 part 'imprint.g.dart';
 
@@ -46,4 +47,16 @@ class Imprint {
   factory Imprint.fromJson(Map<String, dynamic> json) => _$ImprintFromJson(json);
 
   Map<String, dynamic> toJson() => _$ImprintToJson(this);
+
+  Imprint copy() => Imprint(
+        id: const Uuid().v4(),
+        holder: holder,
+        street: street,
+        city: city,
+        phone: phone,
+        mail: mail,
+        tax: tax,
+        homepage: homepage,
+        companyName: companyName,
+      );
 }

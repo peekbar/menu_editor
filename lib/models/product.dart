@@ -1,4 +1,6 @@
+import 'package:flutter/material.dart';
 import 'package:json_annotation/json_annotation.dart';
+import 'package:uuid/uuid.dart';
 
 part 'product.g.dart';
 
@@ -34,4 +36,13 @@ class Product {
   factory Product.fromJson(Map<String, dynamic> json) => _$ProductFromJson(json);
 
   Map<String, dynamic> toJson() => _$ProductToJson(this);
+
+  Product copy() => Product(
+        id: const Uuid().v4(),
+        name: name,
+        shortName: shortName,
+        description: description,
+        price: price,
+        additives: additives,
+      );
 }

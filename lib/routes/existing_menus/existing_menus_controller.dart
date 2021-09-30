@@ -21,4 +21,9 @@ class ExistingMenusController extends GetxController {
     await _menusController.deleteBy(menu.id);
     update();
   }
+
+  Future<void> duplicate(Menu menu) async {
+    await _menusController.duplicate(menu);
+    update();
+  }
 }
