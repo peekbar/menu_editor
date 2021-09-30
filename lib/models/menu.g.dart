@@ -11,6 +11,7 @@ Menu _$MenuFromJson(Map<String, dynamic> json) {
     json,
     requiredKeys: const [
       'id',
+      'editedAt',
       'title',
       'language',
       'categories',
@@ -22,6 +23,7 @@ Menu _$MenuFromJson(Map<String, dynamic> json) {
   );
   return Menu(
     id: json['id'] as String,
+    editedAt: DateTime.parse(json['editedAt'] as String),
     title: json['title'] as String,
     language: _$enumDecode(_$LanguageEnumMap, json['language']),
     categories: (json['categories'] as List<dynamic>)
@@ -42,6 +44,7 @@ Menu _$MenuFromJson(Map<String, dynamic> json) {
 
 Map<String, dynamic> _$MenuToJson(Menu instance) => <String, dynamic>{
       'id': instance.id,
+      'editedAt': instance.editedAt.toIso8601String(),
       'title': instance.title,
       'language': _$LanguageEnumMap[instance.language],
       'categories': instance.categories,

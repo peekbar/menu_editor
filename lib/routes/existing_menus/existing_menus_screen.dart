@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:menu_editor/models/menu.dart';
+import 'package:menu_editor/navigation/navigation.dart';
 import 'package:menu_editor/routes/existing_menus/existing_menus_controller.dart';
 import 'package:menu_editor/themes/text_styles.dart';
 import 'package:menu_editor/themes/theme_colors.dart';
@@ -43,15 +44,31 @@ class _MenuPreview extends StatelessWidget {
                     children: [
                       Text(menu.title),
                       const SizedBox(height: 8.0),
-                      Text(menu.id, style: TextStyles.caption),
+                      Row(
+                        children: [
+                          Text(menu.id, style: TextStyles.caption),
+                          const SizedBox(width: 8.0),
+                          Text(menu.editedAt.toIso8601String(), style: TextStyles.caption),
+                        ],
+                      ),
                     ],
                   ),
                 ),
                 IconButton(
+                  tooltip: 'Duplicate',
+                  onPressed: () => Get.find<ExistingMenusController>().duplicate(menu),
+                  icon: const Icon(Icons.copy),
+                ),
+                IconButton(
+                  tooltip: 'Delete',
                   onPressed: () => Get.find<ExistingMenusController>().delete(menu),
                   icon: const Icon(Icons.clear),
                 ),
-                const Icon(Icons.edit),
+                IconButton(
+                  tooltip: 'Edit',
+                  onPressed: () => Get.toNamed(Navigation.editor, arguments: menu),
+                  icon: const Icon(Icons.edit),
+                ),
               ],
             ),
           ),
