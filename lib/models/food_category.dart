@@ -1,5 +1,6 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:menu_editor/models/product.dart';
+import 'package:uuid/uuid.dart';
 
 part 'food_category.g.dart';
 
@@ -22,4 +23,11 @@ class FoodCategory {
   factory FoodCategory.fromJson(Map<String, dynamic> json) => _$FoodCategoryFromJson(json);
 
   Map<String, dynamic> toJson() => _$FoodCategoryToJson(this);
+
+  FoodCategory copy() => FoodCategory(
+        id: const Uuid().v4(),
+        name: name,
+        icon: icon,
+        products: products.map((p) => p.copy()).toList(),
+      );
 }

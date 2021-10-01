@@ -5,6 +5,7 @@ import 'package:menu_editor/models/info_banner.dart';
 import 'package:menu_editor/models/language.dart';
 import 'package:menu_editor/models/minimum_order.dart';
 import 'package:menu_editor/models/opening_hours.dart';
+import 'package:uuid/uuid.dart';
 
 part 'menu.g.dart';
 
@@ -12,6 +13,9 @@ part 'menu.g.dart';
 class Menu {
   @JsonKey(name: 'id', required: true)
   final String id;
+
+  @JsonKey(name: 'editedAt', required: true)
+  final DateTime editedAt;
 
   @JsonKey(name: 'title', required: true)
   final String title;
@@ -36,6 +40,7 @@ class Menu {
 
   Menu({
     required this.id,
+    required this.editedAt,
     required this.title,
     required this.language,
     required this.categories,
@@ -48,4 +53,16 @@ class Menu {
   factory Menu.fromJson(Map<String, dynamic> json) => _$MenuFromJson(json);
 
   Map<String, dynamic> toJson() => _$MenuToJson(this);
+
+  Menu copy() => Menu(
+        id: const Uuid().v4(),
+        editedAt: DateTime.now(),
+        title: title,
+        language: language,
+        categories: categories.toList(),
+        banners: banners.toList(),
+        openingHours: openingHours.toList(),
+        minimumOrders: minimumOrders.toList(),
+        imprint: imprint,
+      );
 }

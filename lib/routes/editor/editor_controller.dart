@@ -33,6 +33,21 @@ class EditorController extends GetxController {
     companyName: 'PEEKBAR',
   ).obs;
 
+  @override
+  void onInit() {
+    super.onInit();
+    var arg = Get.arguments;
+    if (arg is Menu) {
+      id.value = arg.id;
+      title.value = arg.title;
+      language.value = arg.language;
+      foodCategories.assignAll(arg.categories);
+      infoBanners.assignAll(arg.banners);
+      minimumOrders.assignAll(arg.minimumOrders);
+      imprint.value = arg.imprint;
+    }
+  }
+
   void addTo(Product product, FoodCategory foodCategory) {
     foodCategory.products.add(product);
     update();
@@ -55,7 +70,8 @@ class EditorController extends GetxController {
 
   Future<void> save() async => await _menusController.addOrOverride(
         Menu(
-          id: const Uuid().v4(),
+          id: id.isEmpty ? const Uuid().v4() : id.value,
+          editedAt: DateTime.now(),
           title: title.value,
           language: language.value,
           categories: foodCategories,

@@ -1,4 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'package:uuid/uuid.dart';
 
 part 'info_banner.g.dart';
 
@@ -18,4 +19,6 @@ class InfoBanner {
   factory InfoBanner.fromJson(Map<String, dynamic> json) => _$InfoBannerFromJson(json);
 
   Map<String, dynamic> toJson() => _$InfoBannerToJson(this);
+
+  InfoBanner copy() => InfoBanner(id: const Uuid().v4(), title: title, text: text);
 }
