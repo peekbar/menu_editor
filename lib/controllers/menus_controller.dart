@@ -7,6 +7,7 @@ class MenusController extends GetxController {
 
   final loading = false.obs;
   final menus = <Menu>[].obs;
+  var nonce = 1.obs;
 
   @override
   Future<void> onInit() async {
@@ -41,6 +42,7 @@ class MenusController extends GetxController {
   Future<void> addOrOverride(Menu menu) async {
     menus.removeWhere((m) => m.id == menu.id);
     menus.add(menu);
+    nonce.value = nonce.value + 1;
     await _writeCurrentMenus();
   }
 

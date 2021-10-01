@@ -14,6 +14,10 @@ class ExistingMenusController extends GetxController {
     menus.assignAll(_menusController.menus);
     _menusController.loading.listen((l) => loading.value = l);
     _menusController.menus.listen(menus.assignAll);
+    _menusController.nonce.listen((p0) {
+      print('menus editied');
+      update();
+     });
     super.onInit();
   }
 
