@@ -111,9 +111,14 @@ class EditableTextField extends StatelessWidget {
     _textFieldController.addListener(() {
       saveValue(_textFieldController.text);
     });
+    _focusNode.addListener(() {
+      _textFieldController.selection = TextSelection(baseOffset: 0, extentOffset: _textFieldController.text.length);
+    });
   }
 
   TextEditingController _textFieldController = TextEditingController();
+  FocusNode _focusNode = FocusNode();
+
   @override
   Widget build(BuildContext context) => Padding(
       padding: const EdgeInsets.all(8.0),
@@ -142,6 +147,8 @@ class EditableTextField extends StatelessWidget {
           )
         ),
         controller: _textFieldController,
+        autofocus: true,
+        focusNode: _focusNode,
       ),
     );
 }
