@@ -9,28 +9,28 @@ class Imprint {
   final String id;
 
   @JsonKey(name: 'holder', required: true)
-  final String holder;
+   String holder;
 
   @JsonKey(name: 'street', required: true)
-  final String street;
+   String street;
 
   @JsonKey(name: 'city', required: true)
-  final String city;
+   String city;
 
   @JsonKey(name: 'phone', required: true)
-  final String phone;
+   String phone;
 
   @JsonKey(name: 'mail', required: true)
-  final String mail;
+   String mail;
 
   @JsonKey(name: 'tax', required: true)
-  final String tax;
+   String tax;
 
   @JsonKey(name: 'homepage', required: true)
-  final String homepage;
+   String homepage;
 
   @JsonKey(name: 'companyname', required: true)
-  final String companyName;
+  String companyName;
 
   Imprint({
     required this.id,

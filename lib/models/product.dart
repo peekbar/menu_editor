@@ -10,19 +10,19 @@ class Product {
   final String id;
 
   @JsonKey(name: 'name', required: true)
-  final String name;
+   String name;
 
   @JsonKey(name: 'shortname', required: true)
-  final String shortName;
+   String shortName;
 
   @JsonKey(name: 'description', required: true)
-  final String description;
+   String description;
 
   @JsonKey(name: 'price', required: true)
-  final String price;
+   String price;
 
   @JsonKey(name: 'additives', required: true)
-  final String additives;
+   String additives;
 
   Product({
     required this.id,

@@ -1,9 +1,9 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'dart:math' as math;
 import 'package:menu_editor/controllers/menus_controller.dart';
 import 'package:menu_editor/menu_editor.dart';
-
 import 'package:window_size/window_size.dart' as window_size;
 
 Future<void> main() async {
@@ -17,7 +17,7 @@ Future<void> preAppInit() async {
   Get.put(MenusController(), permanent: true);
 }
 
-setWindowSize() {
+void setWindowSize() {
   window_size.getWindowInfo().then((window) {
     final screen = window.screen;
     if (screen != null) {

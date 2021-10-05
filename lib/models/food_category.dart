@@ -10,10 +10,10 @@ class FoodCategory {
   final String id;
 
   @JsonKey(name: 'name', required: true)
-  final String name;
+   String name;
 
   @JsonKey(name: 'icon', required: true)
-  final String icon;
+   String icon;
 
   @JsonKey(name: 'products', required: true)
   final List<Product> products;

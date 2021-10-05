@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:menu_editor/models/food_category.dart';
+import 'package:menu_editor/models/imprint.dart';
 import 'package:menu_editor/models/product.dart';
 import 'package:menu_editor/routes/editor/editor_controller.dart';
 import 'package:menu_editor/themes/theme_colors.dart';
@@ -22,7 +23,9 @@ class EditorScreen extends GetView<EditorController> {
                   title: const Text('Alert'),
                   content: const Text('Do you really want close the editor? Your current changes won\'t be saved.'),
                   actions: [
-                    TextButton(onPressed: () => Get.back(result: true), child: const Text('YES')),
+                    TextButton(
+                        onPressed: () => {Get.back(result: true), controller.discardChanges()},
+                        child: const Text('YES')),
                     TextButton(onPressed: () => Get.back(result: false), child: const Text('NO')),
                   ],
                 ),
@@ -42,53 +45,7 @@ class EditorScreen extends GetView<EditorController> {
           child: Obx(() => Column(
                 children: [
                   const SizedBox(height: 16.0),
-                  Row(
-                    children: [
-                      const SizedBox(width: 16.0),
-                      Expanded(
-                        child: Material(
-                          color: ThemeColors.grey,
-                          borderRadius: BorderRadius.circular(8.0),
-                          child: InkWell(
-                            borderRadius: BorderRadius.circular(8.0),
-                            onTap: () {},
-                            child: const Center(
-                              child: Padding(
-                                padding: EdgeInsets.all(16.0),
-                                child: Text(
-                                  'edit title',
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: 16.0),
-                      Expanded(
-                        child: Material(
-                          color: ThemeColors.grey,
-                          borderRadius: BorderRadius.circular(8.0),
-                          child: InkWell(
-                            borderRadius: BorderRadius.circular(8.0),
-                            onTap: () {},
-                            child: const Center(
-                              child: Padding(
-                                padding: EdgeInsets.all(16.0),
-                                child: Text(
-                                  'edit imprint',
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: 16.0),
-                    ],
-                  ),
+                  ImprintView(controller.imprint.value),
                   if (controller.foodCategories.isEmpty) ...[
                     const SizedBox(height: 16.0),
                     const _AddCategoryButton(),
@@ -112,6 +69,83 @@ class EditorScreen extends GetView<EditorController> {
       );
 }
 
+class ImprintView extends StatelessWidget {
+  const ImprintView(this.imprint, {Key? key}) : super(key: key);
+
+  final Imprint imprint;
+  @override
+  Widget build(BuildContext context) => Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Table(
+          defaultVerticalAlignment: TableCellVerticalAlignment.middle,
+          columnWidths: const {0: IntrinsicColumnWidth(), 1: IntrinsicColumnWidth(), 2: FlexColumnWidth()},
+          children: [
+            createRow('Firmenname', imprint.companyName, (value) => imprint.companyName = value),
+            createRow('Inhaber', imprint.holder, (value) => imprint.holder = value),
+            createRow('Straße', imprint.street, (value) => imprint.street = value),
+            createRow('Stadt', imprint.city, (value) => imprint.city = value),
+            createRow('Mail', imprint.mail, (value) => imprint.mail = value),
+            createRow('Telefon', imprint.phone, (value) => imprint.phone = value),
+            createRow('Steuernummer', imprint.tax, (value) => imprint.tax = value),
+          ],
+        ),
+      );
+
+  TableRow createRow(String lableText, String editableText, Function(String) saveValue) => TableRow(
+        children: [
+          Text(lableText),
+          SizedBox(
+            width: 30,
+          ),
+          EditableTextField(editableText, saveValue),
+        ],
+      );
+}
+
+class EditableTextField extends StatelessWidget {
+  String editableText;
+  Function(String) saveValue;
+
+  EditableTextField(this.editableText, this.saveValue, {Key? key}) : super(key: key) {
+    _textFieldController.text = editableText;
+    _textFieldController.addListener(() {
+      saveValue(_textFieldController.text);
+    });
+  }
+
+  TextEditingController _textFieldController = TextEditingController();
+  @override
+  Widget build(BuildContext context) => Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: TextField(
+        decoration: const InputDecoration(
+          fillColor: ThemeColors.grey,
+          focusColor: ThemeColors.primaryTransparent,
+          filled: true,
+          border: OutlineInputBorder(
+            borderSide: BorderSide(
+              color: ThemeColors.primaryTransparent,
+              width: 10
+            )
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderSide: BorderSide(
+              color: ThemeColors.primaryTransparent,
+              width: 2
+            )
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderSide: BorderSide(
+              color: ThemeColors.primary,
+              width: 3
+            )
+          )
+        ),
+        controller: _textFieldController,
+      ),
+    );
+}
+
 class _FoodCategoryView extends StatelessWidget {
   final FoodCategory foodCategory;
 
@@ -130,21 +164,42 @@ class _FoodCategoryView extends StatelessWidget {
                       children: [
                         const SizedBox(height: 16.0),
                         Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                          padding: const EdgeInsets.symmetric(horizontal: 16.0),
                           child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text('name: ${foodCategory.name}'),
-                                    Text('icon: ${foodCategory.icon}'),
-                                  ],
-                                ),
+                                child: Table(
+                                      defaultVerticalAlignment: TableCellVerticalAlignment.middle,
+                                      columnWidths: {
+                                        0: IntrinsicColumnWidth(),
+                                        1: FixedColumnWidth(30),
+                                        2: FlexColumnWidth()
+                                      },
+                                      children: [
+                                        TableRow(
+                                          children: [
+                                            Text('Kategorie'),
+                                            SizedBox(width: 20,),
+                                            EditableTextField(foodCategory.name, (p0) => foodCategory.name = p0),
+                                          ],
+                                        ),
+                                        TableRow(
+                                          children: [
+                                            Text('Icon'),
+                                            SizedBox(width: 20,),
+                                            EditableTextField(foodCategory.icon, (p0) => foodCategory.icon = p0),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
                               ),
-                              IconButton(
-                                onPressed: () => Get.find<EditorController>().delete(foodCategory),
-                                icon: const Icon(Icons.delete),
+                              Align(
+                                alignment: Alignment.topCenter,
+                                child: IconButton(
+                                  onPressed: () => Get.find<EditorController>().delete(foodCategory),
+                                  icon: const Icon(Icons.delete),
+                                ),
                               ),
                             ],
                           ),
@@ -177,11 +232,11 @@ class _FoodCategoryView extends StatelessWidget {
                                     ),
                                     for (var i = 0; i < foodCategory.products.length; i++)
                                       TableRow(children: [
-                                        Text('${foodCategory.products[i].name}'),
-                                        Text('${foodCategory.products[i].shortName}'),
-                                        Text('${foodCategory.products[i].description}'),
-                                        Text('${foodCategory.products[i].price}'),
-                                        Text('${foodCategory.products[i].additives}')
+                                        EditableTextField(foodCategory.products[i].name, (p0) => foodCategory.products[i].name = p0),
+                                        EditableTextField(foodCategory.products[i].shortName, (p0) => foodCategory.products[i].shortName = p0),
+                                        EditableTextField(foodCategory.products[i].description, (p0) => foodCategory.products[i].description = p0),
+                                        EditableTextField(foodCategory.products[i].price, (p0) => foodCategory.products[i].price = p0),
+                                        EditableTextField(foodCategory.products[i].additives, (p0) => foodCategory.products[i].additives = p0),
                                       ]),
                                   ],
                                 ),
