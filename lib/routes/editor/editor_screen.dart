@@ -121,36 +121,36 @@ class EditableTextField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: TextField(
-        decoration: const InputDecoration(
-          fillColor: ThemeColors.grey,
-          focusColor: ThemeColors.primaryTransparent,
-          filled: true,
-          border: OutlineInputBorder(
-            borderSide: BorderSide(
-              color: ThemeColors.primaryTransparent,
-              width: 10
-            )
-          ),
-          enabledBorder: OutlineInputBorder(
-            borderSide: BorderSide(
-              color: ThemeColors.primaryTransparent,
-              width: 2
-            )
-          ),
-          focusedBorder: OutlineInputBorder(
-            borderSide: BorderSide(
-              color: ThemeColors.primary,
-              width: 3
-            )
+    padding: const EdgeInsets.only(bottom: 8),
+    child: TextField(
+      decoration: const InputDecoration(
+        fillColor: ThemeColors.grey,
+        focusColor: ThemeColors.primaryTransparent,
+        filled: true,
+        border: OutlineInputBorder(
+          borderSide: BorderSide(
+            color: ThemeColors.primaryTransparent,
+            width: 10
           )
         ),
-        controller: _textFieldController,
-        autofocus: true,
-        focusNode: _focusNode,
+        enabledBorder: OutlineInputBorder(
+          borderSide: BorderSide(
+            color: ThemeColors.primaryTransparent,
+            width: 2
+          )
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderSide: BorderSide(
+            color: ThemeColors.primary,
+            width: 3
+          )
+        )
       ),
-    );
+      controller: _textFieldController,
+      autofocus: true,
+      focusNode: _focusNode,
+    ),
+  );
 }
 
 class _FoodCategoryView extends StatelessWidget {
@@ -222,27 +222,52 @@ class _FoodCategoryView extends StatelessWidget {
                                 Table(
                                   columnWidths: const {
                                     0: FlexColumnWidth(),
-                                    1: FlexColumnWidth(),
-                                    2: FlexColumnWidth(2),
-                                    3: FlexColumnWidth(),
+                                    1: FixedColumnWidth(10),
+                                    2: FlexColumnWidth(),
+                                    3: FixedColumnWidth(10),
                                     4: FlexColumnWidth(2),
+                                    5: FixedColumnWidth(10),
+                                    6: FlexColumnWidth(2),
+                                    7: FixedColumnWidth(10),
+                                    8: FlexColumnWidth()
                                   },
                                   children: [
                                     const TableRow(
                                       children: [
                                         Text('Name'),
+                                        SizedBox(width: 10,),
                                         Text('Shortname'),
+                                        SizedBox(width: 10,),
                                         Text('Description'),
+                                        SizedBox(width: 10,),
                                         Text('Price'),
+                                        SizedBox(width: 10,),
                                         Text('Add'),
                                       ],
+                                    ),
+                                    const TableRow(
+                                      children: [
+                                        SizedBox(height: 8,),
+                                        SizedBox(height: 8,),
+                                        SizedBox(height: 8,),
+                                        SizedBox(height: 8,),
+                                        SizedBox(height: 8,),
+                                        SizedBox(height: 8,),
+                                        SizedBox(height: 8,),
+                                        SizedBox(height: 8,),
+                                        SizedBox(height: 8,),
+                                      ]
                                     ),
                                     for (var i = 0; i < foodCategory.products.length; i++)
                                       TableRow(children: [
                                         EditableTextField(foodCategory.products[i].name, (p0) => foodCategory.products[i].name = p0),
+                                        SizedBox(width: 10,),
                                         EditableTextField(foodCategory.products[i].shortName, (p0) => foodCategory.products[i].shortName = p0),
+                                        SizedBox(width: 10,),
                                         EditableTextField(foodCategory.products[i].description, (p0) => foodCategory.products[i].description = p0),
+                                        SizedBox(width: 10,),
                                         EditableTextField(foodCategory.products[i].price, (p0) => foodCategory.products[i].price = p0),
+                                        SizedBox(width: 10,),
                                         EditableTextField(foodCategory.products[i].additives, (p0) => foodCategory.products[i].additives = p0),
                                       ]),
                                   ],
