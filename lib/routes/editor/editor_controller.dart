@@ -68,6 +68,11 @@ class EditorController extends GetxController {
     update();
   }
 
+  void discardChanges() {
+    // TODO: reload the edited, but not saved menu from the storage to discard changes 
+    _menusController.nonce.value += 1;
+  }
+
   Future<void> save() async => await _menusController.addOrOverride(
         Menu(
           id: id.isEmpty ? const Uuid().v4() : id.value,
