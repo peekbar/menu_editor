@@ -9,6 +9,7 @@ class ExistingMenusController extends GetxController {
   final _menusController = Get.find<MenusController>();
 
   final loading = false.obs;
+  final locked = false.obs;
   final menus = <Menu>[];
 
   @override
@@ -18,9 +19,11 @@ class ExistingMenusController extends GetxController {
     _menusController.loading.listen((l) => loading.value = l);
     _menusController.menus.listen(menus.assignAll);
     _menusController.nonce.listen((p0) {
-      print('menus editied');
       update();
-     });
+    });
+    locked.listen((p0) {
+      update();
+    });
     super.onInit();
   }
 

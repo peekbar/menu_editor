@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_sfsymbols/flutter_sfsymbols.dart';
 import 'package:get/get.dart';
 import 'package:menu_editor/controllers/menus_controller.dart';
 import 'package:menu_editor/models/menu.dart';
@@ -13,22 +12,26 @@ class ExistingMenusScreen extends StatelessWidget {
   final MenusController _menusController = Get.find<MenusController>();
 
   @override
-  Widget build(BuildContext context) => Scaffold(
-        appBar: AppBar(
-          title: const Text('existing menus'),
-          actions: [IconButton(
-            tooltip: 'Import menu',
-            icon: Icon(Icons.download),
-            onPressed: () async {
-              _menusController.importMenu();
-            },
-          ),]
-        ),
-        body: SingleChildScrollView(
-          child: GetBuilder<ExistingMenusController>(
-              builder: (controller) => Column(
-                    children: [for (var menu in controller.menus) _MenuPreview(menu: menu)],
-                  )),
+  Widget build(BuildContext context) => GetBuilder<ExistingMenusController>(
+        builder: (controller) => AbsorbPointer(
+          absorbing: controller.locked.value,
+          child: Scaffold(
+            appBar: AppBar(title: const Text('existing menus'), actions: [
+              IconButton(
+                tooltip: 'Import menu',
+                icon: Icon(Icons.download),
+                onPressed: () {
+                  controller.locked.value = true;
+                  _menusController.importMenu().then((value) => controller.locked.value = false);
+                },
+              ),
+            ]),
+            body: SingleChildScrollView(
+              child: Column(
+                children: [for (var menu in controller.menus) _MenuPreview(menu: menu)],
+              ),
+            ),
+          ),
         ),
       );
 }
@@ -69,7 +72,13 @@ class _MenuPreview extends StatelessWidget {
                 ),
                 IconButton(
                     tooltip: 'Export menu as json',
-                    onPressed: () => _menusController.exportMenu(menu), icon: const Icon(Icons.upload_file_outlined)),
+                    onPressed: () => {
+                          Get.find<ExistingMenusController>().locked.value = true,
+                          _menusController
+                              .exportMenu(menu)
+                              .then((value) => Get.find<ExistingMenusController>().locked.value = false)
+                        },
+                    icon: const Icon(Icons.upload_file_outlined)),
                 IconButton(
                   tooltip: 'Duplicate',
                   onPressed: () => Get.find<ExistingMenusController>().duplicate(menu),
