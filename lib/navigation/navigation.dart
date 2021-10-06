@@ -19,7 +19,7 @@ class Navigation {
     ),
     GetPage(
       name: exitsting_menus,
-      page: () => const ExistingMenusScreen(),
+      page: () => ExistingMenusScreen(),
       binding: BindingsBuilder.put(() => ExistingMenusController()),
     ),
     GetPage(

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_sfsymbols/flutter_sfsymbols.dart';
 import 'package:get/get.dart';
+import 'package:menu_editor/controllers/menus_controller.dart';
 import 'package:menu_editor/models/menu.dart';
 import 'package:menu_editor/navigation/navigation.dart';
 import 'package:menu_editor/routes/existing_menus/existing_menus_controller.dart';
@@ -7,11 +9,21 @@ import 'package:menu_editor/themes/text_styles.dart';
 import 'package:menu_editor/themes/theme_colors.dart';
 
 class ExistingMenusScreen extends StatelessWidget {
-  const ExistingMenusScreen({Key? key}) : super(key: key);
+  ExistingMenusScreen({Key? key}) : super(key: key);
+  final MenusController _menusController = Get.find<MenusController>();
 
   @override
   Widget build(BuildContext context) => Scaffold(
-        appBar: AppBar(title: const Text('existing menus')),
+        appBar: AppBar(
+          title: const Text('existing menus'),
+          actions: [IconButton(
+            tooltip: 'Import menu',
+            icon: Icon(Icons.download),
+            onPressed: () async {
+              _menusController.importMenu();
+            },
+          ),]
+        ),
         body: SingleChildScrollView(
           child: GetBuilder<ExistingMenusController>(
               builder: (controller) => Column(
@@ -23,8 +35,9 @@ class ExistingMenusScreen extends StatelessWidget {
 
 class _MenuPreview extends StatelessWidget {
   final Menu menu;
+  final MenusController _menusController = Get.find<MenusController>();
 
-  const _MenuPreview({Key? key, required this.menu}) : super(key: key);
+  _MenuPreview({Key? key, required this.menu}) : super(key: key);
 
   @override
   Widget build(BuildContext context) => Padding(
@@ -54,6 +67,9 @@ class _MenuPreview extends StatelessWidget {
                     ],
                   ),
                 ),
+                IconButton(
+                    tooltip: 'Export menu as json',
+                    onPressed: () => _menusController.exportMenu(menu), icon: const Icon(Icons.upload_file_outlined)),
                 IconButton(
                   tooltip: 'Duplicate',
                   onPressed: () => Get.find<ExistingMenusController>().duplicate(menu),

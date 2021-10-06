@@ -1,5 +1,9 @@
+import 'dart:convert';
+
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:menu_editor/file_handler.dart';
 import 'package:menu_editor/models/menu.dart';
 
 class MenusController extends GetxController {
@@ -52,6 +56,34 @@ class MenusController extends GetxController {
   }
 
   Future<void> _writeCurrentMenus() async => _storage.write(_StorageKeys.menus, menus.map((m) => m.toJson()).toList());
+
+  Future<void> importMenu() async {
+    String importedString = await FileHandler.getFileAsString();
+    if (importedString != '') {
+      Menu importedMenu = Menu.fromJson(jsonDecode(importedString));
+      print(importedMenu.imprint.companyName);
+      var alreadyImported = menus.where((m) => m.id == importedMenu.id);
+      if (alreadyImported.isNotEmpty) {
+        await Get.dialog<bool?>(
+        AlertDialog(
+          title: const Text('Alert'),
+          content: const Text('Override the already existing menu?'),
+          actions: [
+            TextButton(onPressed: () => {addOrOverride(importedMenu), Get.back()}, child: const Text('Yes, override')),
+            TextButton(onPressed: () => {Get.back()}, child: const Text('NO, cancel import')),
+          ],
+        )
+        );
+      }
+      print(alreadyImported.first.editedAt);
+    }
+  }
+
+  Future<void> exportMenu(Menu menu) async {
+    FileHandler.saveStringAs(
+        '${menu.imprint.companyName.toLowerCase()}_${menu.editedAt.day}.${menu.editedAt.month}.${menu.editedAt.year}.json',
+        jsonEncode(menu.toJson()));
+  }
 }
 
 class _StorageKeys {
