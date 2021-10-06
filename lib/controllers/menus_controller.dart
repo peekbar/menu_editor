@@ -94,7 +94,7 @@ class MenusController extends GetxController {
   }
 
   Future<void> exportMenu(Menu menu) async {
-    FileHandler.saveStringAs(
+    await FileHandler.saveStringAs(
         '${menu.imprint.companyName.toLowerCase()}_${menu.editedAt.day}.${menu.editedAt.month}.${menu.editedAt.year}.json',
         jsonEncode(menu.toJson()));
   }

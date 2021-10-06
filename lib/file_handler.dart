@@ -4,11 +4,8 @@ import 'package:file_picker/file_picker.dart';
 
 class FileHandler {
   static Future<String> getFileAsString() async {
-    FilePickerResult? result = await FilePicker.platform.pickFiles(
-      type: FileType.custom,
-      allowMultiple: false,
-      allowedExtensions: ['json']
-    );
+    FilePickerResult? result =
+        await FilePicker.platform.pickFiles(type: FileType.custom, allowMultiple: false, allowedExtensions: ['json']);
     String text = '';
 
     if (result != null) {
@@ -19,13 +16,13 @@ class FileHandler {
     return text;
   }
 
-  static void saveStringAs(String suggestedFileName, String content) async {
-    String? outputFile =
-        await FilePicker.platform.saveFile(dialogTitle: 'Save file as', fileName: suggestedFileName);
+  static Future<void> saveStringAs(String suggestedFileName, String content) async {
+    String? outputFile = await FilePicker.platform.saveFile(dialogTitle: 'Save file as', fileName: suggestedFileName);
 
     if (outputFile != null) {
       File output = File(outputFile);
-      output.writeAsString(content);
+      await output.writeAsString(content);
     }
+    return;
   }
 }
