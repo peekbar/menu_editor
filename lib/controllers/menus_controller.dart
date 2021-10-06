@@ -60,22 +60,36 @@ class MenusController extends GetxController {
   Future<void> importMenu() async {
     String importedString = await FileHandler.getFileAsString();
     if (importedString != '') {
-      Menu importedMenu = Menu.fromJson(jsonDecode(importedString));
-      print(importedMenu.imprint.companyName);
-      var alreadyImported = menus.where((m) => m.id == importedMenu.id);
-      if (alreadyImported.isNotEmpty) {
-        await Get.dialog<bool?>(
-        AlertDialog(
-          title: const Text('Alert'),
-          content: const Text('Override the already existing menu?'),
-          actions: [
-            TextButton(onPressed: () => {addOrOverride(importedMenu), Get.back()}, child: const Text('Yes, override')),
-            TextButton(onPressed: () => {Get.back()}, child: const Text('NO, cancel import')),
-          ],
-        )
+      try {
+        Menu importedMenu = Menu.fromJson(jsonDecode(importedString));
+        print(importedMenu.imprint.companyName);
+        var alreadyImported = menus.where((m) => m.id == importedMenu.id);
+        if (alreadyImported.isNotEmpty) {
+          await Get.dialog<bool?>(
+          AlertDialog(
+            title: const Text('Alert'),
+            content: const Text('Override the already existing menu?'),
+            actions: [
+              TextButton(onPressed: () => {addOrOverride(importedMenu), Get.back()}, child: const Text('Yes, override')),
+              TextButton(onPressed: () => {Get.back()}, child: const Text('NO, cancel import')),
+            ],
+          )
+          );
+        }
+        print(alreadyImported.first.editedAt);
+      } catch (e) {
+        await Get.dialog(
+          AlertDialog(
+            title: const Text('Import failed'),
+            content: const Text('The file contains not a valid menu!'),
+            actions: [
+              TextButton(onPressed: () => Get.back(), child: const Text('OK, got it.'))
+            ],
+          )
         );
       }
-      print(alreadyImported.first.editedAt);
+      
+      
     }
   }
 
