@@ -8,6 +8,11 @@ version: 1.0.0+1
 environment:
   sdk: '>=2.14.0 <3.0.0'
 
+fonts:
+- family: sficonsets
+  fonts:
+    - asset: packages/flutter_sfsymbols/fonts/sficonsets.ttf
+
 dependencies:
   flutter:
     sdk: flutter
@@ -28,8 +33,9 @@ dependencies:
     path: ./plugins/menubar
   window_size:
     path: ./plugins/window_size
+  file_picker: any
+  flutter_sfsymbols: ^2.0.0
   
-
 dev_dependencies:
   flutter_test:
     sdk: flutter
