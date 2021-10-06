@@ -21,7 +21,7 @@ class FileHandler {
         await FilePicker.platform.saveFile(dialogTitle: 'Save file as', fileName: suggestedFileName);
 
     if (outputFile != null) {
-      File output = File(outputFile!);
+      File output = File(outputFile);
       output.writeAsString(content);
     }
   }
