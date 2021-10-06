@@ -45,6 +45,12 @@ class EditorScreen extends GetView<EditorController> {
           child: Obx(() => Column(
                 children: [
                   const SizedBox(height: 16.0),
+                  Center(
+                    child: Text('Title'),
+                  ),
+                  Center(
+                      child: SizedBox(
+                          width: 200, child: EditableTextField(controller.title, (p0) => {controller.title = p0}))),
                   ImprintView(controller.imprint.value),
                   if (controller.foodCategories.isEmpty) ...[
                     const SizedBox(height: 16.0),
@@ -75,19 +81,29 @@ class ImprintView extends StatelessWidget {
   final Imprint imprint;
   @override
   Widget build(BuildContext context) => Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Table(
-          defaultVerticalAlignment: TableCellVerticalAlignment.middle,
-          columnWidths: const {0: IntrinsicColumnWidth(), 1: IntrinsicColumnWidth(), 2: FlexColumnWidth()},
-          children: [
-            createRow('Firmenname', imprint.companyName, (value) => imprint.companyName = value),
-            createRow('Inhaber', imprint.holder, (value) => imprint.holder = value),
-            createRow('Straße', imprint.street, (value) => imprint.street = value),
-            createRow('Stadt', imprint.city, (value) => imprint.city = value),
-            createRow('Mail', imprint.mail, (value) => imprint.mail = value),
-            createRow('Telefon', imprint.phone, (value) => imprint.phone = value),
-            createRow('Steuernummer', imprint.tax, (value) => imprint.tax = value),
-          ],
+        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+        child: SizedBox(
+          width: double.infinity,
+          child: Material(
+            color: ThemeColors.grey,
+            borderRadius: BorderRadius.circular(8.0),
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Table(
+                defaultVerticalAlignment: TableCellVerticalAlignment.middle,
+                columnWidths: const {0: IntrinsicColumnWidth(), 1: IntrinsicColumnWidth(), 2: FlexColumnWidth()},
+                children: [
+                  createRow('Firmenname', imprint.companyName, (value) => imprint.companyName = value),
+                  createRow('Inhaber', imprint.holder, (value) => imprint.holder = value),
+                  createRow('Straße', imprint.street, (value) => imprint.street = value),
+                  createRow('Stadt', imprint.city, (value) => imprint.city = value),
+                  createRow('Mail', imprint.mail, (value) => imprint.mail = value),
+                  createRow('Telefon', imprint.phone, (value) => imprint.phone = value),
+                  createRow('Steuernummer', imprint.tax, (value) => imprint.tax = value),
+                ],
+              ),
+            ),
+          ),
         ),
       );
 
@@ -121,36 +137,21 @@ class EditableTextField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Padding(
-    padding: const EdgeInsets.only(bottom: 8),
-    child: TextField(
-      decoration: const InputDecoration(
-        fillColor: ThemeColors.grey,
-        focusColor: ThemeColors.primaryTransparent,
-        filled: true,
-        border: OutlineInputBorder(
-          borderSide: BorderSide(
-            color: ThemeColors.primaryTransparent,
-            width: 10
-          )
+        padding: const EdgeInsets.only(bottom: 8),
+        child: TextField(
+          decoration: const InputDecoration(
+              fillColor: ThemeColors.grey,
+              focusColor: ThemeColors.primaryTransparent,
+              filled: true,
+              border: OutlineInputBorder(borderSide: BorderSide(color: ThemeColors.primaryTransparent, width: 10)),
+              enabledBorder:
+                  OutlineInputBorder(borderSide: BorderSide(color: ThemeColors.primaryTransparent, width: 2)),
+              focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: ThemeColors.primary, width: 3))),
+          controller: _textFieldController,
+          autofocus: true,
+          focusNode: _focusNode,
         ),
-        enabledBorder: OutlineInputBorder(
-          borderSide: BorderSide(
-            color: ThemeColors.primaryTransparent,
-            width: 2
-          )
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderSide: BorderSide(
-            color: ThemeColors.primary,
-            width: 3
-          )
-        )
-      ),
-      controller: _textFieldController,
-      autofocus: true,
-      focusNode: _focusNode,
-    ),
-  );
+      );
 }
 
 class _FoodCategoryView extends StatelessWidget {
@@ -177,29 +178,33 @@ class _FoodCategoryView extends StatelessWidget {
                             children: [
                               Expanded(
                                 child: Table(
-                                      defaultVerticalAlignment: TableCellVerticalAlignment.middle,
-                                      columnWidths: {
-                                        0: IntrinsicColumnWidth(),
-                                        1: FixedColumnWidth(30),
-                                        2: FlexColumnWidth()
-                                      },
+                                  defaultVerticalAlignment: TableCellVerticalAlignment.middle,
+                                  columnWidths: {
+                                    0: IntrinsicColumnWidth(),
+                                    1: FixedColumnWidth(30),
+                                    2: FlexColumnWidth()
+                                  },
+                                  children: [
+                                    TableRow(
                                       children: [
-                                        TableRow(
-                                          children: [
-                                            Text('Kategorie'),
-                                            SizedBox(width: 20,),
-                                            EditableTextField(foodCategory.name, (p0) => foodCategory.name = p0),
-                                          ],
+                                        Text('Kategorie'),
+                                        SizedBox(
+                                          width: 20,
                                         ),
-                                        TableRow(
-                                          children: [
-                                            Text('Icon'),
-                                            SizedBox(width: 20,),
-                                            EditableTextField(foodCategory.icon, (p0) => foodCategory.icon = p0),
-                                          ],
-                                        ),
+                                        EditableTextField(foodCategory.name, (p0) => foodCategory.name = p0),
                                       ],
                                     ),
+                                    TableRow(
+                                      children: [
+                                        Text('Icon'),
+                                        SizedBox(
+                                          width: 20,
+                                        ),
+                                        EditableTextField(foodCategory.icon, (p0) => foodCategory.icon = p0),
+                                      ],
+                                    ),
+                                  ],
+                                ),
                               ),
                               Align(
                                 alignment: Alignment.topCenter,
@@ -235,40 +240,77 @@ class _FoodCategoryView extends StatelessWidget {
                                     const TableRow(
                                       children: [
                                         Text('Name'),
-                                        SizedBox(width: 10,),
+                                        SizedBox(
+                                          width: 10,
+                                        ),
                                         Text('Shortname'),
-                                        SizedBox(width: 10,),
+                                        SizedBox(
+                                          width: 10,
+                                        ),
                                         Text('Description'),
-                                        SizedBox(width: 10,),
+                                        SizedBox(
+                                          width: 10,
+                                        ),
                                         Text('Price'),
-                                        SizedBox(width: 10,),
+                                        SizedBox(
+                                          width: 10,
+                                        ),
                                         Text('Add'),
                                       ],
                                     ),
-                                    const TableRow(
-                                      children: [
-                                        SizedBox(height: 8,),
-                                        SizedBox(height: 8,),
-                                        SizedBox(height: 8,),
-                                        SizedBox(height: 8,),
-                                        SizedBox(height: 8,),
-                                        SizedBox(height: 8,),
-                                        SizedBox(height: 8,),
-                                        SizedBox(height: 8,),
-                                        SizedBox(height: 8,),
-                                      ]
-                                    ),
+                                    const TableRow(children: [
+                                      SizedBox(
+                                        height: 8,
+                                      ),
+                                      SizedBox(
+                                        height: 8,
+                                      ),
+                                      SizedBox(
+                                        height: 8,
+                                      ),
+                                      SizedBox(
+                                        height: 8,
+                                      ),
+                                      SizedBox(
+                                        height: 8,
+                                      ),
+                                      SizedBox(
+                                        height: 8,
+                                      ),
+                                      SizedBox(
+                                        height: 8,
+                                      ),
+                                      SizedBox(
+                                        height: 8,
+                                      ),
+                                      SizedBox(
+                                        height: 8,
+                                      ),
+                                    ]),
                                     for (var i = 0; i < foodCategory.products.length; i++)
                                       TableRow(children: [
-                                        EditableTextField(foodCategory.products[i].name, (p0) => foodCategory.products[i].name = p0),
-                                        SizedBox(width: 10,),
-                                        EditableTextField(foodCategory.products[i].shortName, (p0) => foodCategory.products[i].shortName = p0),
-                                        SizedBox(width: 10,),
-                                        EditableTextField(foodCategory.products[i].description, (p0) => foodCategory.products[i].description = p0),
-                                        SizedBox(width: 10,),
-                                        EditableTextField(foodCategory.products[i].price, (p0) => foodCategory.products[i].price = p0),
-                                        SizedBox(width: 10,),
-                                        EditableTextField(foodCategory.products[i].additives, (p0) => foodCategory.products[i].additives = p0),
+                                        EditableTextField(
+                                            foodCategory.products[i].name, (p0) => foodCategory.products[i].name = p0),
+                                        SizedBox(
+                                          width: 10,
+                                        ),
+                                        EditableTextField(foodCategory.products[i].shortName,
+                                            (p0) => foodCategory.products[i].shortName = p0),
+                                        SizedBox(
+                                          width: 10,
+                                        ),
+                                        EditableTextField(foodCategory.products[i].description,
+                                            (p0) => foodCategory.products[i].description = p0),
+                                        SizedBox(
+                                          width: 10,
+                                        ),
+                                        EditableTextField(foodCategory.products[i].price,
+                                            (p0) => foodCategory.products[i].price = p0),
+                                        SizedBox(
+                                          width: 10,
+                                        ),
+                                        EditableTextField(foodCategory.products[i].additives,
+                                            (p0) => foodCategory.products[i].additives = p0),
                                       ]),
                                   ],
                                 ),

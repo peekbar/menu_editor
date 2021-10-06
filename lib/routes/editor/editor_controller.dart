@@ -15,7 +15,7 @@ class EditorController extends GetxController {
 
   // menu
   final id = ''.obs;
-  final title = ''.obs;
+  var title = '';
   final language = Language.en.obs;
   final foodCategories = <FoodCategory>[].obs;
   final infoBanners = <InfoBanner>[].obs;
@@ -39,7 +39,7 @@ class EditorController extends GetxController {
     var arg = Get.arguments;
     if (arg is Menu) {
       id.value = arg.id;
-      title.value = arg.title;
+      title = arg.title;
       language.value = arg.language;
       foodCategories.assignAll(arg.categories);
       infoBanners.assignAll(arg.banners);
@@ -77,7 +77,7 @@ class EditorController extends GetxController {
         Menu(
           id: id.isEmpty ? const Uuid().v4() : id.value,
           editedAt: DateTime.now(),
-          title: title.value,
+          title: title,
           language: language.value,
           categories: foodCategories,
           banners: infoBanners,
