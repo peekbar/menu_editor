@@ -9,10 +9,10 @@ class MinimumOrder {
   final String id;
 
   @JsonKey(name: 'dist', required: true)
-  final String distance;
+  String distance;
 
   @JsonKey(name: 'order', required: true)
-  final String order;
+  String order;
 
   MinimumOrder({required this.id, required this.distance, required this.order});
 

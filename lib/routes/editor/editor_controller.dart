@@ -58,6 +58,11 @@ class EditorController extends GetxController {
     openingHours.add(newEntry);
     update();
   }
+
+  void addMinimumOrder(MinimumOrder newEntry) {
+    minimumOrders.add(newEntry);
+    update();
+  }
   // void updateCategory(FoodCategory foodCategory) {
   //   foodCategories[foodCategory.id] = foodCategory;
   //   update();

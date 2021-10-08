@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:menu_editor/models/food_category.dart';
 import 'package:menu_editor/models/imprint.dart';
+import 'package:menu_editor/models/minimum_order.dart';
 import 'package:menu_editor/models/opening_hours.dart';
 import 'package:menu_editor/models/product.dart';
 import 'package:menu_editor/models/weekday.dart';
@@ -73,6 +74,8 @@ class EditorScreen extends GetView<EditorController> {
                     ),
                   const SizedBox(height: 16.0),
                   _OpeningHoursView(controller.openingHours),
+                  const SizedBox(height: 16.0),
+                  _MinimumOrderView(controller.minimumOrders),
                   const SizedBox(height: 16.0),
                 ],
               )),
@@ -369,9 +372,7 @@ class _ProductView extends StatelessWidget {
 }
 
 class _OpeningHoursView extends StatelessWidget {
-  _OpeningHoursView(this.openingHoursList, {Key? key}) {
-    print(openingHoursList);
-  }
+  _OpeningHoursView(this.openingHoursList, {Key? key}) ;
 
   final List<OpeningHours> openingHoursList;
   @override
@@ -482,6 +483,71 @@ class _OpeningHoursView extends StatelessWidget {
       );
 }
 
+class _MinimumOrderView extends StatelessWidget {
+  _MinimumOrderView(this.minimumOrderList, { Key? key }) : super(key: key);
+
+  List<MinimumOrder> minimumOrderList;
+  @override
+  Widget build(BuildContext context) => Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+        child: SizedBox(
+          width: double.infinity,
+          child: Material(
+            color: ThemeColors.grey,
+            borderRadius: BorderRadius.circular(8.0),
+            child: GetBuilder<EditorController>(
+                builder: (controller) => Column(
+                      children: [
+                        const SizedBox(height: 16.0),
+                        Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 16),
+                            child: Center(child: Text('Minimum Order'))),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Expanded(
+                                child: Table(
+                                  defaultVerticalAlignment: TableCellVerticalAlignment.middle,
+                                  columnWidths: {
+                                    0: FlexColumnWidth(),
+                                    1: FixedColumnWidth(30),
+                                    2: FlexColumnWidth()
+                                  },
+                                  children: [
+                                    const TableRow(
+                                      children: [
+                                        Text('Distance'),
+                                        SizedBox(
+                                          width: 20,
+                                        ),
+                                        Text('Order Value')
+                                      ],
+                                    ),
+                                    for (var i = 0; i < minimumOrderList.length; i++)
+                                      TableRow(children: [
+                                        EditableTextField(minimumOrderList[i].distance, (p0) => minimumOrderList[i].distance = p0),
+                                        const SizedBox(
+                                          width: 20,
+                                        ),
+                                        EditableTextField(minimumOrderList[i].order, (p0) => minimumOrderList[i].order = p0),
+                                        
+                                      ])
+                                  ],
+                                ),
+                              )
+                            ],
+                          ),
+                        ),
+                        _AddMinimumOrderButton()
+                      ],
+                    )),
+          ),
+        ),
+      );
+  }
+
 class _AddOpeningHoursButton extends StatelessWidget {
   const _AddOpeningHoursButton({Key? key}) : super(key: key);
 
@@ -535,6 +601,20 @@ class _AddProductButton extends StatelessWidget {
           ),
           foodCategory,
         ),
+        icon: const Icon(Icons.add),
+      );
+}
+
+class _AddMinimumOrderButton extends StatelessWidget {
+  const _AddMinimumOrderButton({ Key? key }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) => IconButton(
+        tooltip: 'New Opening Hour Entry',
+        onPressed: () {
+          Get.find<EditorController>()
+              .addMinimumOrder(MinimumOrder(id: const Uuid().v4(), distance: '5km', order: '20 Euro'));
+        },
         icon: const Icon(Icons.add),
       );
 }
