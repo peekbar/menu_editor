@@ -1,8 +1,11 @@
+import 'package:expandable/expandable.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:menu_editor/models/food_category.dart';
 import 'package:menu_editor/models/imprint.dart';
+import 'package:menu_editor/models/opening_hours.dart';
 import 'package:menu_editor/models/product.dart';
+import 'package:menu_editor/models/weekday.dart';
 import 'package:menu_editor/routes/editor/editor_controller.dart';
 import 'package:menu_editor/themes/theme_colors.dart';
 import 'package:uuid/uuid.dart';
@@ -68,6 +71,8 @@ class EditorScreen extends GetView<EditorController> {
                         const _AddCategoryButton(),
                       ],
                     ),
+                  const SizedBox(height: 16.0),
+                  _OpeningHoursView(controller.openingHours),
                   const SizedBox(height: 16.0),
                 ],
               )),
@@ -363,6 +368,134 @@ class _ProductView extends StatelessWidget {
       );
 }
 
+class _OpeningHoursView extends StatelessWidget {
+  _OpeningHoursView(this.openingHoursList, {Key? key}) {
+    print(openingHoursList);
+  }
+
+  final List<OpeningHours> openingHoursList;
+  @override
+  Widget build(BuildContext context) => Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+        child: SizedBox(
+          width: double.infinity,
+          child: Material(
+            color: ThemeColors.grey,
+            borderRadius: BorderRadius.circular(8.0),
+            child: GetBuilder<EditorController>(
+                builder: (controller) => Column(
+                      children: [
+                        const SizedBox(height: 16.0),
+                        Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 16),
+                            child: Center(child: Text('Opening Hours'))),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Expanded(
+                                child: Table(
+                                  defaultVerticalAlignment: TableCellVerticalAlignment.middle,
+                                  columnWidths: {
+                                    0: FlexColumnWidth(),
+                                    1: FixedColumnWidth(30),
+                                    2: IntrinsicColumnWidth()
+                                  },
+                                  children: [
+                                    const TableRow(
+                                      children: [
+                                        Text('Days'),
+                                        SizedBox(
+                                          width: 20,
+                                        ),
+                                        Text('Hours')
+                                      ],
+                                    ),
+                                    for (var i = 0; i < openingHoursList.length; i++)
+                                      TableRow(children: [
+                                        ExpandableNotifier(
+                                          child: Column(
+                                            children: [
+                                              Expandable(
+                                                collapsed: ExpandableButton(
+                                                child: Row(
+                                                  children: [
+                                                    Align(
+                                                      alignment: Alignment.centerLeft,
+                                                    child: Icon(Icons.expand_more),
+                                                ),
+                                                Text(WeekdayString.weekdayListToString(openingHoursList[i].days))
+                                                  ],
+                                                )),
+                                                expanded: Column(children: [
+                                                  ExpandableButton(
+                                                    child: Row(
+                                                      mainAxisAlignment: MainAxisAlignment.start,
+                                                      children: [
+                                                        Icon(Icons.expand_less),
+                                                        Text(WeekdayString.weekdayListToString(openingHoursList[i].days))
+                                                      ],
+                                                    ),
+                                                  ),
+                                                  for (var day in Weekday.values)
+                                                    Row(
+                                                      mainAxisAlignment: MainAxisAlignment.start,
+                                                      children: [
+                                                        Checkbox(
+                                                            value: openingHoursList[i].days.contains(day),
+                                                            onChanged: (value) => {
+                                                             
+                                                                  if (value!) {
+                                                                    openingHoursList[i].days.add(day),
+                                                                  } else {
+                                                                    openingHoursList[i].days.remove(day)
+                                                                  },
+                                                              
+                                                                  controller.update()
+                                                                }),
+                                                        Text(WeekdayString.weekdayToString(day)),
+                                                      ],
+                                                    ),
+                                                ]),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                        const SizedBox(
+                                          width: 20,
+                                        ),
+                                        EditableTextField(openingHoursList[i].hours, (p0) => openingHoursList[i].hours = p0)
+                                        
+                                      ])
+                                  ],
+                                ),
+                              )
+                            ],
+                          ),
+                        ),
+                        _AddOpeningHoursButton()
+                      ],
+                    )),
+          ),
+        ),
+      );
+}
+
+class _AddOpeningHoursButton extends StatelessWidget {
+  const _AddOpeningHoursButton({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) => IconButton(
+        tooltip: 'New Opening Hour Entry',
+        onPressed: () {
+          Get.find<EditorController>()
+              .addOpeningHours(OpeningHours(id: const Uuid().v4(), days: {Weekday.monday}, hours: '00:00 - 00:00'));
+        },
+        icon: const Icon(Icons.add),
+      );
+}
+
 class _AddCategoryButton extends StatelessWidget {
   const _AddCategoryButton({Key? key}) : super(key: key);
 
@@ -391,7 +524,7 @@ class _AddProductButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) => IconButton(
         tooltip: 'New Product',
-        onPressed: () => Get.find<EditorController>().addTo(
+        onPressed: () => Get.find<EditorController>().addProductTo(
           Product(
             id: const Uuid().v4(),
             name: 'New Product',

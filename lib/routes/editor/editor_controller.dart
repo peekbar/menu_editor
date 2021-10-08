@@ -45,14 +45,19 @@ class EditorController extends GetxController {
       infoBanners.assignAll(arg.banners);
       minimumOrders.assignAll(arg.minimumOrders);
       imprint.value = arg.imprint;
+      openingHours.assignAll(arg.openingHours);
     }
   }
 
-  void addTo(Product product, FoodCategory foodCategory) {
+  void addProductTo(Product product, FoodCategory foodCategory) {
     foodCategory.products.add(product);
     update();
   }
-
+  
+  void addOpeningHours(OpeningHours newEntry) {
+    openingHours.add(newEntry);
+    update();
+  }
   // void updateCategory(FoodCategory foodCategory) {
   //   foodCategories[foodCategory.id] = foodCategory;
   //   update();
