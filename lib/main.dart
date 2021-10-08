@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
@@ -27,6 +28,9 @@ void setWindowSize() {
       final left = ((screenFrame.width - width) / 2).roundToDouble();
       final top = ((screenFrame.height - height) / 3).roundToDouble();
       final frame = Rect.fromLTWH(left, top, width, height);
+      window_size.setWindowMinSize(Size(width, height));
+      window_size
+          .setWindowTitle('Menu Editor');
       window_size.setWindowFrame(frame);
     }
   });
