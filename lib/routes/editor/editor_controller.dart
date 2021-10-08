@@ -63,6 +63,11 @@ class EditorController extends GetxController {
     minimumOrders.add(newEntry);
     update();
   }
+
+  void addInfoBanner(InfoBanner newEntry) {
+    infoBanners.add(newEntry);
+    update();
+  }
   // void updateCategory(FoodCategory foodCategory) {
   //   foodCategories[foodCategory.id] = foodCategory;
   //   update();

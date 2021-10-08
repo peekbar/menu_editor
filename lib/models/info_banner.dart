@@ -9,10 +9,10 @@ class InfoBanner {
   final String id;
 
   @JsonKey(name: 'title', required: true)
-  final String title;
+  String title;
 
   @JsonKey(name: 'text', required: true)
-  final String text;
+  String text;
 
   InfoBanner({required this.id, required this.title, required this.text});
 
