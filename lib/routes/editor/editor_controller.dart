@@ -15,7 +15,7 @@ class EditorController extends GetxController {
 
   // menu
   final id = ''.obs;
-  var title = '';
+  String title = '';
   final language = Language.en.obs;
   final foodCategories = <FoodCategory>[].obs;
   final infoBanners = <InfoBanner>[].obs;
@@ -68,19 +68,30 @@ class EditorController extends GetxController {
     infoBanners.add(newEntry);
     update();
   }
-  // void updateCategory(FoodCategory foodCategory) {
-  //   foodCategories[foodCategory.id] = foodCategory;
-  //   update();
-  // }
 
-  void delete(FoodCategory foodCategory) {
-    foodCategories.removeWhere((element) => element.id == foodCategory.id);
+  void deleteItemFrom(dynamic item, List<dynamic> list) {
+    list.removeWhere((element) => element.id == item.id);
     update();
   }
 
+  void deleteFoodCategory(FoodCategory foodCategory) {
+    deleteItemFrom(foodCategory, foodCategories);
+  }
+
   void deleteProductFrom(Product product, FoodCategory foodCategory) {
-    foodCategory.products.removeWhere((p) => p.id == product.id);
-    update();
+    deleteItemFrom(product, foodCategory.products);
+  }
+
+  void deleteOpeningHours(OpeningHours openingHours) {
+    deleteItemFrom(openingHours, this.openingHours);
+  }
+
+  void deleteMinimumOrder(MinimumOrder minimumOrderEntry) {
+    deleteItemFrom(minimumOrderEntry, minimumOrders);
+  }
+
+  void deleteInfoBanner(InfoBanner infoBannerEntry) {
+    deleteItemFrom(infoBannerEntry, infoBanners);
   }
 
   void discardChanges() {

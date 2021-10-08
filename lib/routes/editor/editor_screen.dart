@@ -50,12 +50,13 @@ class EditorScreen extends GetView<EditorController> {
           child: Obx(() => Column(
                 children: [
                   const SizedBox(height: 16.0),
-                  Center(
+                  const Center(
                     child: Text('Title'),
                   ),
                   Center(
                       child: SizedBox(
                           width: 200, child: EditableTextField(controller.title, (p0) => {controller.title = p0}))),
+                  const SizedBox(height: 8,),
                   ImprintView(controller.imprint.value),
                   if (controller.foodCategories.isEmpty) ...[
                     const SizedBox(height: 16.0),
@@ -121,7 +122,7 @@ class ImprintView extends StatelessWidget {
   TableRow createRow(String lableText, String editableText, Function(String) saveValue) => TableRow(
         children: [
           Text(lableText),
-          SizedBox(
+          const SizedBox(
             width: 30,
           ),
           EditableTextField(editableText, saveValue),
@@ -130,8 +131,8 @@ class ImprintView extends StatelessWidget {
 }
 
 class EditableTextField extends StatelessWidget {
-  String editableText;
-  Function(String) saveValue;
+  final String editableText;
+  final Function(String) saveValue;
 
   EditableTextField(this.editableText, this.saveValue, {Key? key}) : super(key: key) {
     _textFieldController.text = editableText;
@@ -143,12 +144,12 @@ class EditableTextField extends StatelessWidget {
     });
   }
 
-  TextEditingController _textFieldController = TextEditingController();
-  FocusNode _focusNode = FocusNode();
+  final TextEditingController _textFieldController = TextEditingController();
+  final FocusNode _focusNode = FocusNode();
 
   @override
   Widget build(BuildContext context) => Padding(
-        padding: const EdgeInsets.only(bottom: 8),
+        padding: const EdgeInsets.symmetric(vertical: 4),
         child: TextField(
           decoration: const InputDecoration(
               fillColor: ThemeColors.grey,
@@ -190,7 +191,7 @@ class _FoodCategoryView extends StatelessWidget {
                               Expanded(
                                 child: Table(
                                   defaultVerticalAlignment: TableCellVerticalAlignment.middle,
-                                  columnWidths: {
+                                  columnWidths: const {
                                     0: IntrinsicColumnWidth(),
                                     1: FixedColumnWidth(30),
                                     2: FlexColumnWidth()
@@ -198,19 +199,15 @@ class _FoodCategoryView extends StatelessWidget {
                                   children: [
                                     TableRow(
                                       children: [
-                                        Text('Kategorie'),
-                                        SizedBox(
-                                          width: 20,
-                                        ),
+                                        const Text('Kategorie'),
+                                        const SizedBox(),
                                         EditableTextField(foodCategory.name, (p0) => foodCategory.name = p0),
                                       ],
                                     ),
                                     TableRow(
                                       children: [
-                                        Text('Icon'),
-                                        SizedBox(
-                                          width: 20,
-                                        ),
+                                        const Text('Icon'),
+                                        const SizedBox(),
                                         EditableTextField(foodCategory.icon, (p0) => foodCategory.icon = p0),
                                       ],
                                     ),
@@ -220,7 +217,7 @@ class _FoodCategoryView extends StatelessWidget {
                               Align(
                                 alignment: Alignment.topCenter,
                                 child: IconButton(
-                                  onPressed: () => Get.find<EditorController>().delete(foodCategory),
+                                  onPressed: () => Get.find<EditorController>().deleteFoodCategory(foodCategory),
                                   icon: const Icon(Icons.delete),
                                 ),
                               ),
@@ -236,6 +233,7 @@ class _FoodCategoryView extends StatelessWidget {
                             child: Column(
                               children: [
                                 Table(
+                                  defaultVerticalAlignment: TableCellVerticalAlignment.middle,
                                   columnWidths: const {
                                     0: FlexColumnWidth(),
                                     1: FixedColumnWidth(10),
@@ -245,31 +243,28 @@ class _FoodCategoryView extends StatelessWidget {
                                     5: FixedColumnWidth(10),
                                     6: FlexColumnWidth(2),
                                     7: FixedColumnWidth(10),
-                                    8: FlexColumnWidth()
+                                    8: FlexColumnWidth(),
+                                    9: IntrinsicColumnWidth()
                                   },
                                   children: [
                                     const TableRow(
                                       children: [
                                         Text('Name'),
-                                        SizedBox(
-                                          width: 10,
-                                        ),
+                                        SizedBox(),
                                         Text('Shortname'),
-                                        SizedBox(
-                                          width: 10,
-                                        ),
+                                        SizedBox(),
                                         Text('Description'),
-                                        SizedBox(
-                                          width: 10,
-                                        ),
+                                        SizedBox(),
                                         Text('Price'),
-                                        SizedBox(
-                                          width: 10,
-                                        ),
+                                        SizedBox(),
                                         Text('Add'),
+                                        SizedBox()
                                       ],
                                     ),
                                     const TableRow(children: [
+                                      SizedBox(
+                                        height: 8,
+                                      ),
                                       SizedBox(
                                         height: 8,
                                       ),
@@ -302,33 +297,33 @@ class _FoodCategoryView extends StatelessWidget {
                                       TableRow(children: [
                                         EditableTextField(
                                             foodCategory.products[i].name, (p0) => foodCategory.products[i].name = p0),
-                                        SizedBox(
+                                        const SizedBox(
                                           width: 10,
                                         ),
                                         EditableTextField(foodCategory.products[i].shortName,
                                             (p0) => foodCategory.products[i].shortName = p0),
-                                        SizedBox(
+                                        const SizedBox(
                                           width: 10,
                                         ),
                                         EditableTextField(foodCategory.products[i].description,
                                             (p0) => foodCategory.products[i].description = p0),
-                                        SizedBox(
+                                        const SizedBox(
                                           width: 10,
                                         ),
                                         EditableTextField(foodCategory.products[i].price,
                                             (p0) => foodCategory.products[i].price = p0),
-                                        SizedBox(
+                                        const SizedBox(
                                           width: 10,
                                         ),
                                         EditableTextField(foodCategory.products[i].additives,
                                             (p0) => foodCategory.products[i].additives = p0),
+                                        IconButton(
+                                            onPressed: () =>
+                                                controller.deleteProductFrom(foodCategory.products[i], foodCategory),
+                                            icon: const Icon(Icons.delete)),
                                       ]),
                                   ],
                                 ),
-                                // for (var i = 0; i < foodCategory.products.length; i++) ...[
-                                //   _ProductView(foodCategory: foodCategory, product: foodCategory.products[i]),
-                                //   const Divider(height: 2.0, color: Colors.black),
-                                // ],
                                 const SizedBox(height: 8.0),
                                 _AddProductButton(foodCategory: foodCategory),
                                 const SizedBox(height: 8.0),
@@ -342,40 +337,8 @@ class _FoodCategoryView extends StatelessWidget {
       );
 }
 
-class _ProductView extends StatelessWidget {
-  final FoodCategory foodCategory;
-  final Product product;
-
-  const _ProductView({Key? key, required this.foodCategory, required this.product}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) => Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Row(
-          children: [
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text('name: ${product.name}'),
-                  Text('shortname: ${product.shortName}'),
-                  Text('description: ${product.description}'),
-                  Text('price: ${product.price}'),
-                  Text('additives: ${product.additives}'),
-                ],
-              ),
-            ),
-            IconButton(
-              onPressed: () => Get.find<EditorController>().deleteProductFrom(product, foodCategory),
-              icon: const Icon(Icons.delete),
-            ),
-          ],
-        ),
-      );
-}
-
 class _OpeningHoursView extends StatelessWidget {
-  _OpeningHoursView(this.openingHoursList, {Key? key});
+  _OpeningHoursView(this.openingHoursList);
 
   final List<OpeningHours> openingHoursList;
   @override
@@ -390,9 +353,11 @@ class _OpeningHoursView extends StatelessWidget {
                 builder: (controller) => Column(
                       children: [
                         const SizedBox(height: 16.0),
-                        Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 16),
-                            child: Center(child: Text('Opening Hours'))),
+                        const Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 16), child: Center(child: Text('Opening Hours'))),
+                        const SizedBox(
+                          height: 16,
+                        ),
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 16.0),
                           child: Row(
@@ -400,21 +365,24 @@ class _OpeningHoursView extends StatelessWidget {
                             children: [
                               Expanded(
                                 child: Table(
-                                  defaultVerticalAlignment: TableCellVerticalAlignment.middle,
-                                  columnWidths: {
+                                  defaultVerticalAlignment: TableCellVerticalAlignment.top,
+                                  columnWidths: const {
                                     0: FlexColumnWidth(),
-                                    1: FixedColumnWidth(30),
-                                    2: IntrinsicColumnWidth()
+                                    1: FixedColumnWidth(10),
+                                    2: IntrinsicColumnWidth(),
+                                    3: IntrinsicColumnWidth()
                                   },
                                   children: [
                                     const TableRow(
+                                      children: [Text('Days'), SizedBox(), Text('Hours'), SizedBox()],
+                                    ),
+                                    const TableRow(
                                       children: [
-                                        Text('Days'),
-                                        SizedBox(
-                                          width: 20,
-                                        ),
-                                        Text('Hours')
-                                      ],
+                                        SizedBox(height: 8,),
+                                        SizedBox(height: 8,),
+                                        SizedBox(height: 8,),
+                                        SizedBox(height: 8,)
+                                      ]
                                     ),
                                     for (var i = 0; i < openingHoursList.length; i++)
                                       TableRow(children: [
@@ -425,7 +393,7 @@ class _OpeningHoursView extends StatelessWidget {
                                                 collapsed: ExpandableButton(
                                                     child: Row(
                                                   children: [
-                                                    Align(
+                                                    const Align(
                                                       alignment: Alignment.centerLeft,
                                                       child: Icon(Icons.expand_more),
                                                     ),
@@ -437,7 +405,7 @@ class _OpeningHoursView extends StatelessWidget {
                                                     child: Row(
                                                       mainAxisAlignment: MainAxisAlignment.start,
                                                       children: [
-                                                        Icon(Icons.expand_less),
+                                                        const Icon(Icons.expand_less),
                                                         Text(
                                                             WeekdayString.weekdayListToString(openingHoursList[i].days))
                                                       ],
@@ -466,11 +434,14 @@ class _OpeningHoursView extends StatelessWidget {
                                             ],
                                           ),
                                         ),
-                                        const SizedBox(
-                                          width: 20,
-                                        ),
+                                        const SizedBox(),
                                         EditableTextField(
-                                            openingHoursList[i].hours, (p0) => openingHoursList[i].hours = p0)
+                                            openingHoursList[i].hours, (p0) => openingHoursList[i].hours = p0),
+                                        TableCell(
+                                            verticalAlignment: TableCellVerticalAlignment.middle,
+                                            child: IconButton(
+                                                onPressed: () => controller.deleteOpeningHours(openingHoursList[i]),
+                                                icon: const Icon(Icons.delete)))
                                       ])
                                   ],
                                 ),
@@ -478,7 +449,8 @@ class _OpeningHoursView extends StatelessWidget {
                             ],
                           ),
                         ),
-                        _AddOpeningHoursButton()
+                        const _AddOpeningHoursButton(),
+                        const SizedBox(height: 16)
                       ],
                     )),
           ),
@@ -489,7 +461,7 @@ class _OpeningHoursView extends StatelessWidget {
 class _MinimumOrderView extends StatelessWidget {
   _MinimumOrderView(this.minimumOrderList, {Key? key}) : super(key: key);
 
-  List<MinimumOrder> minimumOrderList;
+  final List<MinimumOrder> minimumOrderList;
   @override
   Widget build(BuildContext context) => Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16.0),
@@ -502,9 +474,9 @@ class _MinimumOrderView extends StatelessWidget {
                 builder: (controller) => Column(
                       children: [
                         const SizedBox(height: 16.0),
-                        Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 16),
-                            child: Center(child: Text('Minimum Order'))),
+                        const Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 16), child: Center(child: Text('Minimum Order'))),
+                        const SizedBox(height: 16),
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 16.0),
                           child: Row(
@@ -513,26 +485,36 @@ class _MinimumOrderView extends StatelessWidget {
                               Expanded(
                                 child: Table(
                                   defaultVerticalAlignment: TableCellVerticalAlignment.middle,
-                                  columnWidths: {0: FlexColumnWidth(), 1: FixedColumnWidth(30), 2: FlexColumnWidth()},
+                                  columnWidths: {
+                                    0: const FlexColumnWidth(),
+                                    1: const FixedColumnWidth(10),
+                                    2: const FlexColumnWidth(),
+                                    3: const IntrinsicColumnWidth()
+                                  },
                                   children: [
                                     const TableRow(
+                                      children: [Text('Distance'), SizedBox(), Text('Order Value'), SizedBox()],
+                                    ),
+                                    const TableRow(
                                       children: [
-                                        Text('Distance'),
-                                        SizedBox(
-                                          width: 20,
-                                        ),
-                                        Text('Order Value')
-                                      ],
+                                        SizedBox(height: 8,),
+                                        SizedBox(height: 8,),
+                                        SizedBox(height: 8,),
+                                        SizedBox(height: 8,)
+                                      ]
                                     ),
                                     for (var i = 0; i < minimumOrderList.length; i++)
                                       TableRow(children: [
                                         EditableTextField(
                                             minimumOrderList[i].distance, (p0) => minimumOrderList[i].distance = p0),
-                                        const SizedBox(
-                                          width: 20,
-                                        ),
+                                        const SizedBox(),
                                         EditableTextField(
                                             minimumOrderList[i].order, (p0) => minimumOrderList[i].order = p0),
+                                        TableCell(
+                                            verticalAlignment: TableCellVerticalAlignment.middle,
+                                            child: IconButton(
+                                                onPressed: () => controller.deleteMinimumOrder(minimumOrderList[i]),
+                                                icon: const Icon(Icons.delete)))
                                       ])
                                   ],
                                 ),
@@ -540,7 +522,8 @@ class _MinimumOrderView extends StatelessWidget {
                             ],
                           ),
                         ),
-                        _AddMinimumOrderButton()
+                        const _AddMinimumOrderButton(),
+                        const SizedBox(height: 16)
                       ],
                     )),
           ),
@@ -551,7 +534,7 @@ class _MinimumOrderView extends StatelessWidget {
 class _InfoBannerView extends StatelessWidget {
   _InfoBannerView(this.infoBannerList, {Key? key}) : super(key: key);
 
-  List<InfoBanner> infoBannerList;
+  final List<InfoBanner> infoBannerList;
   @override
   Widget build(BuildContext context) => Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16.0),
@@ -564,9 +547,10 @@ class _InfoBannerView extends StatelessWidget {
                 builder: (controller) => Column(
                       children: [
                         const SizedBox(height: 16.0),
-                        Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 16),
+                        const Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 16),
                             child: Center(child: Text('Information Banners'))),
+                        const SizedBox(height: 16,),
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 16.0),
                           child: Row(
@@ -575,29 +559,35 @@ class _InfoBannerView extends StatelessWidget {
                               Expanded(
                                 child: Table(
                                   defaultVerticalAlignment: TableCellVerticalAlignment.middle,
-                                  columnWidths: {
+                                  columnWidths: const {
                                     0: FlexColumnWidth(1),
-                                    1: FixedColumnWidth(30),
-                                    2: FlexColumnWidth(4)
+                                    1: FixedColumnWidth(10),
+                                    2: FlexColumnWidth(4),
+                                    3: IntrinsicColumnWidth()
                                   },
                                   children: [
                                     const TableRow(
+                                      children: [Text('Title'), SizedBox(), Text('Description'), SizedBox()],
+                                    ),
+                                    const TableRow(
                                       children: [
-                                        Text('Title'),
-                                        SizedBox(
-                                          width: 20,
-                                        ),
-                                        Text('Description')
-                                      ],
+                                        SizedBox(height: 8,),
+                                        SizedBox(height: 8,),
+                                        SizedBox(height: 8,),
+                                        SizedBox(height: 8,)
+                                      ]
                                     ),
                                     for (var i = 0; i < infoBannerList.length; i++)
                                       TableRow(children: [
                                         EditableTextField(
                                             infoBannerList[i].title, (p0) => infoBannerList[i].title = p0),
-                                        const SizedBox(
-                                          width: 20,
-                                        ),
+                                        const SizedBox(),
                                         EditableTextField(infoBannerList[i].text, (p0) => infoBannerList[i].text = p0),
+                                        TableCell(
+                                            verticalAlignment: TableCellVerticalAlignment.middle,
+                                            child: IconButton(
+                                                onPressed: () => controller.deleteInfoBanner(infoBannerList[i]),
+                                                icon: const Icon(Icons.delete)))
                                       ])
                                   ],
                                 ),
@@ -605,7 +595,8 @@ class _InfoBannerView extends StatelessWidget {
                             ],
                           ),
                         ),
-                        _AddInfobannerButton()
+                        const _AddInfobannerButton(),
+                        const SizedBox(height: 16)
                       ],
                     )),
           ),
@@ -685,15 +676,15 @@ class _AddMinimumOrderButton extends StatelessWidget {
 }
 
 class _AddInfobannerButton extends StatelessWidget {
-  const _AddInfobannerButton({ Key? key }) : super(key: key);
+  const _AddInfobannerButton({Key? key}) : super(key: key);
 
   @override
-    Widget build(BuildContext context) => IconButton(
-          tooltip: 'New Info Banner Entry',
-          onPressed: () {
-            Get.find<EditorController>()
-                .addInfoBanner(InfoBanner(id: const Uuid().v4(), title: 'Title', text: 'Description Text'));
-          },
-          icon: const Icon(Icons.add),
-        );
+  Widget build(BuildContext context) => IconButton(
+        tooltip: 'New Info Banner Entry',
+        onPressed: () {
+          Get.find<EditorController>()
+              .addInfoBanner(InfoBanner(id: const Uuid().v4(), title: 'Title', text: 'Description Text'));
+        },
+        icon: const Icon(Icons.add),
+      );
 }
