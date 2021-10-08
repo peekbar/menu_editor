@@ -44,6 +44,7 @@ class MenusController extends GetxController {
   }
 
   Future<void> addOrOverride(Menu menu) async {
+    print(menu.openingHours.toString());
     menus.removeWhere((m) => m.id == menu.id);
     menus.add(menu);
     nonce.value = nonce.value + 1;

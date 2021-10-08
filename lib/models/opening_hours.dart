@@ -13,7 +13,7 @@ class OpeningHours {
   final Set<Weekday> days;
 
   @JsonKey(name: 'hours', required: true)
-  final String hours;
+   String hours;
 
   OpeningHours({required this.id, required this.days, required this.hours});
 
