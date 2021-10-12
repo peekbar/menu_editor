@@ -1,8 +1,11 @@
 import 'dart:convert';
 
+import 'package:dart_console/dart_console.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:menu_clt/classes/generator.dart';
+import 'package:menu_clt/classes/local_file_helper.dart';
 import 'package:menu_editor/file_handler.dart';
 import 'package:menu_editor/models/menu.dart';
 
@@ -98,6 +101,18 @@ class MenusController extends GetxController {
     await FileHandler.saveStringAs(
         '${menu.imprint.companyName.toLowerCase()}_${menu.editedAt.day}.${menu.editedAt.month}.${menu.editedAt.year}.json',
         jsonEncode(menu.toJson()));
+  }
+
+  Future<void> generateMenu(Menu menu) async {
+    String? source = await FileHandler.getDirectory('Select a template Folder');
+    
+    String? destination = await FileHandler.getDirectory('Destination for the generated website');
+    destination = await FileHandler.createDirectory(destination!, menu.title);
+    if (destination != null && source != null) {
+      LocalFileHelper().copyAllFilesTo(destination, source);
+      Generator(Console()).generateFrom(destination, jsonEncode(menu.toJson()));
+    }
+    
   }
 }
 
