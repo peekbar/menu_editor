@@ -1,0 +1,3 @@
+[submodule "menu_clt"]
+	path = menu_clt
+	url = https://github.com/peekbar/menu_clt.git
