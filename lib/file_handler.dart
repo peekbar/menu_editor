@@ -25,4 +25,15 @@ class FileHandler {
     }
     return;
   }
+
+  static Future<String?> getDirectory(String dialog) async {
+    String? result = await FilePicker.platform.getDirectoryPath(dialogTitle: dialog);
+    return result;
+  }
+
+  static Future<String?> createDirectory(String destination, String name) async { 
+
+    await Directory(destination+'/'+name).create();
+    return Future.value(destination+'/'+name);
+  }
 }

@@ -71,6 +71,15 @@ class _MenuPreview extends StatelessWidget {
                   ),
                 ),
                 IconButton(
+                    tooltip: 'Generate Website',
+                    onPressed: () =>{
+                          Get.find<ExistingMenusController>().locked.value = true,
+                          _menusController
+                              .generateMenu(menu)
+                              .then((value) => Get.find<ExistingMenusController>().locked.value = false)
+                        },
+                    icon: const Icon(Icons.public)),
+                IconButton(
                     tooltip: 'Export menu as json',
                     onPressed: () => {
                           Get.find<ExistingMenusController>().locked.value = true,

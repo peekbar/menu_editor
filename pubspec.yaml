@@ -33,6 +33,8 @@ dependencies:
     path: ./plugins/menubar
   window_size:
     path: ./plugins/window_size
+  menu_clt:
+    path: ./menu_clt
   file_picker: any
   flutter_sfsymbols: ^2.0.0
   expandable: ^5.0.1
