@@ -29,12 +29,11 @@ dependencies:
 
   # ui
   google_fonts: ^2.1.0
-  menubar:
-    path: ./plugins/menubar
   window_size:
     path: ./plugins/window_size
   menu_clt:
-    path: ./menu_clt
+    git:
+      url: https://github.com/peekbar/menu_clt.git
   file_picker: any
   flutter_sfsymbols: ^2.0.0
   expandable: ^5.0.1
