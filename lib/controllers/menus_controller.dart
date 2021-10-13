@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:dart_console/dart_console.dart';
 import 'package:flutter/material.dart';
@@ -62,10 +63,10 @@ class MenusController extends GetxController {
   Future<void> _writeCurrentMenus() async => _storage.write(_StorageKeys.menus, menus.map((m) => m.toJson()).toList());
 
   Future<void> importMenu() async {
-    String importedString = await FileHandler.getFileAsString();
+    var importedString = await FileHandler.getFileAsString();
     if (importedString != '') {
       try {
-        Menu importedMenu = Menu.fromJson(jsonDecode(importedString));
+        var importedMenu = Menu.fromJson(jsonDecode(importedString));
         print(importedMenu.imprint.companyName);
         var alreadyImported = menus.where((m) => m.id == importedMenu.id);
         if (alreadyImported.isNotEmpty) {
@@ -87,7 +88,7 @@ class MenusController extends GetxController {
             title: const Text('Import failed'),
             content: const Text('The file contains not a valid menu!'),
             actions: [
-              TextButton(onPressed: () => Get.back(), child: const Text('OK, got it.'))
+              TextButton(onPressed: Get.back, child: const Text('OK, got it.'))
             ],
           )
         );
@@ -104,19 +105,64 @@ class MenusController extends GetxController {
   }
 
   Future<void> generateMenu(Menu menu) async {
-    String? source = await FileHandler.getDirectory('Select a template Folder');
-    
+    var source = await findLastUsedTemplate();
+    var success = true;
+
     if (source != null) {
-      String? destination = await FileHandler.getDirectory('Destination for the generated website');
+      await Get.dialog(
+        AlertDialog(
+          title: const Text('Use previous template'),
+          content: const Text('Do you want to use the previously selected template again?'),
+          actions: [
+            TextButton(onPressed: Get.back, child: const Text('Yes')),
+            TextButton(onPressed: () => {Get.back(), source = null}, child: const Text('No, select different'))
+          ],
+        )
+      );
+    }
+    source ??= await FileHandler.getDirectory('Select a template Folder');
+ 
+    if (source != null) {
+      await setLastUsedTemplate(source!);
+      var destination = await FileHandler.getDirectory('Destination for the generated website');
       
       if (destination != null) {
         destination = await FileHandler.createDirectory(destination, menu.title);
-        LocalFileHelper().copyAllFilesTo(destination!, source);
-        Generator(Console()).generateFrom(destination, jsonEncode(menu.toJson()));
+        LocalFileHelper().copyAllFilesTo(destination!, source!);
+        success = await Generator(Console()).generateFrom(destination, jsonEncode(menu.toJson()));
       }
-
     }
-    
+    if (!success) {
+      await Get.dialog(
+        AlertDialog(
+          title: const Text('Website generation failed.'),
+          content: const Text('Please check the template for correctness.'),
+          actions: [
+            TextButton(onPressed: Get.back, child: const Text('OK, got it.'))
+          ],
+        )
+      );
+    };
+  }
+
+  Future<String?> findLastUsedTemplate() async {
+    await GetStorage.init();
+
+    var template = _storage.read(_StorageKeys.template);
+    if (template != null && ! await Directory(template).exists()) {
+      return null;
+    }
+    // used to check for permissions
+    try {
+      Directory(template).listSync();
+    } catch (e) {
+      return null;
+    }
+    return template;
+  }
+
+  Future<void> setLastUsedTemplate(String pathToTemplateDirectory) async {
+    await _storage.write(_StorageKeys.template, pathToTemplateDirectory);
   }
 }
 
@@ -124,4 +170,5 @@ class _StorageKeys {
   _StorageKeys._();
 
   static const menus = 'menus';
+  static const template = 'template';
 }
