@@ -106,11 +106,15 @@ class MenusController extends GetxController {
   Future<void> generateMenu(Menu menu) async {
     String? source = await FileHandler.getDirectory('Select a template Folder');
     
-    String? destination = await FileHandler.getDirectory('Destination for the generated website');
-    destination = await FileHandler.createDirectory(destination!, menu.title);
-    if (destination != null && source != null) {
-      LocalFileHelper().copyAllFilesTo(destination, source);
-      Generator(Console()).generateFrom(destination, jsonEncode(menu.toJson()));
+    if (source != null) {
+      String? destination = await FileHandler.getDirectory('Destination for the generated website');
+      
+      if (destination != null) {
+        destination = await FileHandler.createDirectory(destination, menu.title);
+        LocalFileHelper().copyAllFilesTo(destination!, source);
+        Generator(Console()).generateFrom(destination, jsonEncode(menu.toJson()));
+      }
+
     }
     
   }
