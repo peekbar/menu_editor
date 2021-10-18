@@ -1,15 +1,16 @@
 import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
+import 'package:path_provider/path_provider.dart';
 
 class FileHandler {
   static Future<String> getFileAsString() async {
-    FilePickerResult? result =
+    var result =
         await FilePicker.platform.pickFiles(type: FileType.custom, allowMultiple: false, allowedExtensions: ['json']);
-    String text = '';
+    var text = '';
 
     if (result != null) {
-      File file = File(result.files.single.path!);
+      var file = File(result.files.single.path!);
       text = await file.readAsString();
     }
 
@@ -17,23 +18,31 @@ class FileHandler {
   }
 
   static Future<void> saveStringAs(String suggestedFileName, String content) async {
-    String? outputFile = await FilePicker.platform.saveFile(dialogTitle: 'Save file as', fileName: suggestedFileName);
+    var outputFile = await FilePicker.platform.saveFile(dialogTitle: 'Save file as', fileName: suggestedFileName);
 
     if (outputFile != null) {
-      File output = File(outputFile);
+      var output = File(outputFile);
       await output.writeAsString(content);
     }
     return;
   }
 
   static Future<String?> getDirectory(String dialog) async {
-    String? result = await FilePicker.platform.getDirectoryPath(dialogTitle: dialog);
+    var result = await FilePicker.platform.getDirectoryPath(dialogTitle: dialog);
     return result;
   }
 
-  static Future<String?> createDirectory(String destination, String name) async { 
+  static Future<String?> createDirectory(String destination, String name) async {
+    await Directory('$destination/$name').create();
+    return Future.value('$destination/$name');
+  }
 
-    await Directory(destination+'/'+name).create();
-    return Future.value(destination+'/'+name);
+  static Future<String> getApplicationLocationTemplateDirectory() async {
+    final localDir = await getApplicationDocumentsDirectory();
+    var templateDir = '${localDir.path}/templates';
+    if (!Directory(templateDir).existsSync()) {
+      Directory(templateDir).createSync();
+    }
+    return templateDir;
   }
 }

@@ -70,31 +70,24 @@ class MenusController extends GetxController {
         print(importedMenu.imprint.companyName);
         var alreadyImported = menus.where((m) => m.id == importedMenu.id);
         if (alreadyImported.isNotEmpty) {
-          await Get.dialog<bool?>(
-          AlertDialog(
+          await Get.dialog<bool?>(AlertDialog(
             title: const Text('Alert'),
             content: const Text('Override the already existing menu?'),
             actions: [
-              TextButton(onPressed: () => {addOrOverride(importedMenu), Get.back()}, child: const Text('Yes, override')),
+              TextButton(
+                  onPressed: () => {addOrOverride(importedMenu), Get.back()}, child: const Text('Yes, override')),
               TextButton(onPressed: () => {Get.back()}, child: const Text('NO, cancel import')),
             ],
-          )
-          );
+          ));
         }
         print(alreadyImported.first.editedAt);
       } catch (e) {
-        await Get.dialog(
-          AlertDialog(
-            title: const Text('Import failed'),
-            content: const Text('The file contains not a valid menu!'),
-            actions: [
-              TextButton(onPressed: Get.back, child: const Text('OK, got it.'))
-            ],
-          )
-        );
+        await Get.dialog(AlertDialog(
+          title: const Text('Import failed'),
+          content: const Text('The file contains not a valid menu!'),
+          actions: [TextButton(onPressed: Get.back, child: const Text('OK, got it.'))],
+        ));
       }
-      
-      
     }
   }
 
@@ -109,23 +102,36 @@ class MenusController extends GetxController {
     var success = true;
 
     if (source != null) {
-      await Get.dialog(
-        AlertDialog(
-          title: const Text('Use previous template'),
-          content: const Text('Do you want to use the previously selected template again?'),
-          actions: [
-            TextButton(onPressed: Get.back, child: const Text('Yes')),
-            TextButton(onPressed: () => {Get.back(), source = null}, child: const Text('No, select different'))
-          ],
-        )
-      );
+      await Get.dialog(AlertDialog(
+        title: const Text('Use previous template'),
+        content: const Text('Do you want to use the previously selected template again?'),
+        actions: [
+          TextButton(onPressed: Get.back, child: const Text('Yes')),
+          TextButton(onPressed: () => {Get.back(), source = null}, child: const Text('No, select different'))
+        ],
+      ));
     }
-    source ??= await FileHandler.getDirectory('Select a template Folder');
- 
+
+    if (source == null) {
+      String name;
+      String? destination;
+      await FileHandler.getDirectory('Select a template Folder').then((value) async => {
+        // copy template to ApplicationLocationDirectory, to circumvent access right issues on application restart
+            if (value != null)
+              {
+                name = value.split('/').last,
+                destination = await FileHandler.createDirectory(
+                    await FileHandler.getApplicationLocationTemplateDirectory(), name),
+                LocalFileHelper().copyAllFilesTo(destination!, value)
+              },
+            source = destination
+          });
+    }
+
     if (source != null) {
       await setLastUsedTemplate(source!);
       var destination = await FileHandler.getDirectory('Destination for the generated website');
-      
+
       if (destination != null) {
         destination = await FileHandler.createDirectory(destination, menu.title);
         LocalFileHelper().copyAllFilesTo(destination!, source!);
@@ -133,23 +139,20 @@ class MenusController extends GetxController {
       }
     }
     if (!success) {
-      await Get.dialog(
-        AlertDialog(
-          title: const Text('Website generation failed.'),
-          content: const Text('Please check the template for correctness.'),
-          actions: [
-            TextButton(onPressed: Get.back, child: const Text('OK, got it.'))
-          ],
-        )
-      );
-    };
+      await Get.dialog(AlertDialog(
+        title: const Text('Website generation failed.'),
+        content: const Text('Please check the template for correctness.'),
+        actions: [TextButton(onPressed: Get.back, child: const Text('OK, got it.'))],
+      ));
+    }
+    ;
   }
 
   Future<String?> findLastUsedTemplate() async {
     await GetStorage.init();
 
     var template = _storage.read(_StorageKeys.template);
-    if (template != null && ! await Directory(template).exists()) {
+    if (template != null && !await Directory(template).exists()) {
       return null;
     }
     // used to check for permissions
