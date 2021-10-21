@@ -108,7 +108,7 @@ jobs:
         Copy-Item (vswhere -latest -find 'VC\Redist\MSVC\*\x64\*\vcruntime140_1.dll') .
     - name: Compress build for macOS
       if: matrix.target == 'macOS'
-      run: ditto -c -k --sequesterRsrc --keepParent Flutter\ Editor.app $GITHUB_WORKSPACE/menu_editor_${{ matrix.target }}.zip
+      run: ditto -c -k --sequesterRsrc --keepParent Editor.app $GITHUB_WORKSPACE/menu_editor_${{ matrix.target }}.zip
       working-directory: ${{ matrix.build_path }}
     - name: Compress build for Windows
       if: matrix.target == 'Windows'
